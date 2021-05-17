@@ -7,7 +7,6 @@
 {% if show_mass_delete %}
     <form action="{% url "webapp:article_mass_action" %}" method="post">
         {% csrf_token %}
-        <p class="mass-actions"><input type="submit" name="delete" value="Delete selected"></p>
 {% endif %}
         {% for article in articles %}
             <div class="box">
