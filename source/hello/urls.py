@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('api_v1/', include('api_v1.urls')),
+    path('api_v2/', include('api_v2.urls')),
     path('', include('webapp_api.urls')),
     path('like/', include('webapp.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
