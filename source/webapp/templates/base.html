@@ -21,9 +21,6 @@
                 <li><a href="{% url 'webapp:index' %}">Главная</a></li>
                 {% if request.user.is_authenticated %}
                     <li><a href="{% url 'webapp:advert_create' %}">Создать</a></li>
-                    {% if request.user.moderate %}
-                        <li><a>Модерировать</a></li>
-                    {% endif %}
                     {% block menu %}{% endblock %}
                     <li><a href="{% url 'accounts:detail' request.user.pk %}">
                         Привет, {{ request.user.get_full_name|default:request.user.username }}
