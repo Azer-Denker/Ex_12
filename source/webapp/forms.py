@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
 from django.utils.deconstruct import deconstructible
 
-from .models import STATUS_CHOICES, Article, Comment
+from .models import STATUS_CHOICES, Advert
 
 default_status = STATUS_CHOICES[0][0]
 
@@ -32,7 +32,7 @@ class MinLengthValidator(BaseValidator):
         return len(value)
 
 
-class ArticleForm(forms.ModelForm):
+class AdvertForm(forms.ModelForm):
     publish_at = forms.DateTimeField(required=False, label='Время публикации',
                                      input_formats=['%Y-%m-%d', BROWSER_DATETIME_FORMAT,
                                                     '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M',
@@ -40,9 +40,9 @@ class ArticleForm(forms.ModelForm):
                                      widget=XDatepickerWidget)
 
     class Meta:
-        model = Article
-        fields = ['title', 'text', 'status', 'publish_at', 'tags']
-        widgets = {'tags': forms.CheckboxSelectMultiple}
+        model = Advert
+        fields = ['title', 'photo_img', 'text', 'price', 'status', 'publish_at', 'category']
+        widgets = {'category': forms.CheckboxSelectMultiple}
 
     def clean(self):
         cleaned_data = super().clean()
@@ -50,21 +50,11 @@ class ArticleForm(forms.ModelForm):
         text = cleaned_data.get('text')
         title = cleaned_data.get('title')
         if text and title and text == title:
-            errors.append(ValidationError("Text of the article should not duplicate it's title!"))
+            errors.append(ValidationError("Text of the advert should not duplicate it's title!"))
         if errors:
             raise ValidationError(errors)
         return cleaned_data
 
 
-# class CommentForm(forms.Form):
-#     article = forms.ModelChoiceField(queryset=Article.objects.all(), required=True, label='Статья')
-
-
 class SimpleSearchForm(forms.Form):
     search = forms.CharField(max_length=100, required=False, label="Найти")
-
-
-class ArticleCommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['text']
