@@ -1,0 +1,43 @@
+{% load log %}
+{% load static %}
+
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}
+
+{% if show_mass_delete %}
+    <form action="{% url "webapp:advert_mass_action" %}" method="post">
+        {% csrf_token %}
+{% endif %}
+        {% for advert in adverts %}
+            <div class="box">
+            {% if advert.photo_img %}
+                <img class="avatar" src="{{ advert.photo_img.url }}" alt="advert photo" style="height: 188px;">
+            {% else %}
+                <img class="avatar" src="{% static 'img/web_sh.gif' %}" alt="advert photo">
+            {% endif %}
+                <h3><a href="{% url "webapp:advert_view" advert.pk %}">{{ advert.title }}</a></h3>
+                <p>Статус: {{ advert.status }} | {{ advert.get_status_display }}</p>
+                <p>
+                    <h6 style="margin-top: 10px; margin-bottom: 10px;">Автор: <a href="{% url 'accounts:detail' advert.author_id %}">{{ advert.author }}</a></h6>
+                    <h6 style="margin-top: 10px; margin-bottom: 10px;">Создан: {{ advert.created_at|date:"d.m.Y H:i:s" }}</h6>
+                    <h6 style="margin-top: 10px; margin-bottom: 10px;">Публикован: {{ advert.publish_at|date:"d.m.Y H:i:s" }}</h6>
+                </p>
+                <p>Категории: {% for cate in advert.category.all %}{{ cate.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                {% if perms.webapp.change_advert or advert.author == request.user %}
+                    <a href="{% url 'webapp:advert_update' advert.pk %}">Update</a>
+                {% endif %}
+                {% if perms.webapp.delete_advert or advert.author == request.user %}
+                    <a href="{% url 'webapp:advert_delete' advert.pk %}">Delete</a>
+                {% endif %}
+            </div>
+        {% empty %}
+            <h2 class="text-center">Нет статей</h2>
+        {% endfor %}
+{% if show_mass_delete %}
+    </form>
+{% endif %}
+
+{% if is_paginated %}
+    {% include 'partial/pagination.html' %}
+{% endif %}

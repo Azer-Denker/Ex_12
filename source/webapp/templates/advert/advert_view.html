@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load log %}
+{% load static %}
+
+{% block title %}View{% endblock %}
+
+{% block menu %}
+    {% if perms.webapp.change_advert or advert.author == request.user %}
+        <li><a href="{% url 'webapp:advert_update' advert.pk %}">Update</a></li>
+    {% endif %}
+    {% if perms.webapp.delete_advert or advert.author == request.user %}
+        <li><a href="{% url 'webapp:advert_delete' advert.pk %}">Delete</a></li>
+    {% endif %}
+{#    <li><a href="{% url 'webapp:advert_comment_add' advert.pk %}">Add Comment</a></li>#}
+{% endblock %}
+
+{% block content %}
+    <div class="box">
+        {% if advert.photo_img %}
+            <img class="avatar" src="{{ advert.photo_img.url }}" alt="advert photo" style="height: 188px;">
+        {% else %}
+            <img class="avatar" src="{% static 'img/web_sh.gif' %}" alt="advert photo">
+        {% endif %}
+        <h1>{{ advert.title }}</h1>
+        <p class="pre">{{ advert.text }}</p>
+        {% if advert.price %}
+            <p>Цена: {{ advert.price }} сом</p>
+        {% endif %}
+        <p>От:
+            <a href="{% url 'accounts:detail' advert.author_id %}">{{ advert.author }}</a>
+            <p>Создан: {{ advert.created_at|date:"d.m.Y H:i:s" }}</p>
+        </p>
+        <p>Публикован: {{ advert.publish_at|date:"d.m.Y H:i:s" }}</p>
+        <p>Категории: {% for cate in advert.category.all %}{{ cate.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+        <hr>
+{#        <h3>Comments:</h3>#}
+{#        {% if is_paginated %}#}
+{#            {% include 'partial/pagination.html' %}#}
+{#        {% endif %}#}
+{#        {% for comment in comments %}#}
+{#            <div class="box">#}
+{#                <h4>#}
+{#                    <a href="{% url 'accounts:detail' comment.author_id %}">{{ comment.author }}</a>#}
+{#                    ({{ comment.created_at }})#}
+{#                </h4>#}
+{#                <div class="pre">{{ comment.text }}</div>#}
+{#                {% if perms.webapp.change_comment or comment.author == request.user %}#}
+{#                    <p><a href="{% url 'webapp:comment_update' comment.pk %}">Update</a></p>#}
+{#                {% endif %}#}
+{#                {% if perms.webapp.delete_comment or comment.author == request.user %}#}
+{#                    <p><a href="{% url 'webapp:comment_delete' comment.pk %}">Delete</a></p>#}
+{#                {% endif %}#}
+{#            </div>#}
+{#        {% empty %}#}
+{#            <p>Нет комментариев</p>#}
+{#        {% endfor %}#}
+{#        {% if is_paginated %}#}
+{#            {% include 'partial/pagination.html' %}#}
+{#        {% endif %}#}
+    </div>
+{% endblock %}
