@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.contrib.auth.models import AbstractUser
 from django.utils.timezone import now
 from datetime import timedelta
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 TOKEN_TYPE_REGISTER = 'register'
@@ -45,6 +46,7 @@ class Profile(models.Model):
     user: AbstractUser = models.OneToOneField(get_user_model(), related_name='profile',
                                               on_delete=models.CASCADE, verbose_name='Пользователь')
     birth_date = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
+    phone_number = PhoneNumberField(null=True, blank=True, verbose_name='Номер телефона')
     avatar = models.ImageField(null=True, blank=True, upload_to='user_pics', verbose_name='Аватар')
 
     def __str__(self):
