@@ -63,12 +63,12 @@ class UserDetailView(LoginRequiredMixin, DetailView):
     paginate_related_orphans = 0
 
     def get_context_data(self, **kwargs):
-        articles = self.object.articles.order_by('-created_at')
-        paginator = Paginator(articles, self.paginate_related_by, orphans=self.paginate_related_orphans)
+        adverts = self.object.adverts.order_by('-created_at')
+        paginator = Paginator(adverts, self.paginate_related_by, orphans=self.paginate_related_orphans)
         page_number = self.request.GET.get('page', 1)
         page = paginator.get_page(page_number)
         kwargs['page_obj'] = page
-        kwargs['articles'] = page.object_list
+        kwargs['adverts'] = page.object_list
         kwargs['is_paginated'] = page.has_other_pages()
         if self.object == self.request.user:
             kwargs['show_mass_delete'] = True
