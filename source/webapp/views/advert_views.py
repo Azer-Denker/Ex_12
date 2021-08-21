@@ -24,7 +24,6 @@ class IndexView(SearchView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        print(queryset.filter(is_delete=False))
         data = queryset.filter(is_delete=False)
         return data
 
@@ -100,13 +99,10 @@ class AdvertUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 class AdvertDeleteView(UserPassesTestMixin, DeleteView):
+    template_name = 'advert/advert_delete.html'
     model = Advert
     success_url = reverse_lazy('webapp:index')
 
-    def delete_view(request, pk):
-        advert = get_object_or_404(Advert, pk=pk)
-        if request.method == 'POST':
-            advert.is_delete = True
-            advert.save()
-            return redirect('webapp:index')
-
+    def test_func(self):
+        return self.request.user.has_perm('webapp.delete_advert') or \
+               self.get_object().author == self.request.user
